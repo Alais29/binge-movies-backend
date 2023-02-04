@@ -11,6 +11,28 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": ["@typescript-eslint"],
-  "rules": { "import/extensions": ["error", "ignorePackages", { "": "never" }] }
+  "plugins": ["@typescript-eslint", "spellcheck"],
+  "rules": {
+    "import/extensions": ["error", "ignorePackages", { "": "never" }],
+    "spellcheck/spell-checker": [
+      "warn",
+      {
+        "comments": true,
+        "strings": true,
+        "identifiers": true,
+        "ignoreRequire": true,
+        "templates": true,
+        "skipWords": [
+          "dict",
+          "aff",
+          "hunspellchecker",
+          "hunspell",
+          "utils",
+          "urlencoded"
+        ],
+        "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
+        "minLength": 3
+      }
+    ]
+  }
 }

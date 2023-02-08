@@ -4,7 +4,9 @@
   "description": "Backend service for a movies/tv shows information web app",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon -L -r tsconfig-paths/register ./src/index.ts",
+    "dev": "nodemon -L -r tsconfig-paths/register ./src/index.ts",
+    "start": "ts-node -L -r tsconfig-paths/register ./src/index.ts",
+    "seed-data": "ts-node -r tsconfig-paths/register ./src/index.ts --seed-data",
     "build": "tsc && resolve-tspaths",
     "lint": "eslint . --ext .ts",
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
@@ -16,9 +18,11 @@
   "author": "Alfonsina Lizardo",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jasmine": "4.5.0",
     "jasmine-spec-reporter": "^7.0.0",
+    "mongoose": "^6.9.0",
     "supertest": "^6.1.3"
   },
   "devDependencies": {

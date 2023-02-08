@@ -13,7 +13,11 @@
   },
   "plugins": ["@typescript-eslint", "spellcheck"],
   "rules": {
-    "import/extensions": ["error", "ignorePackages", { "": "never" }],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      { "": "never", "ts": "never" }
+    ],
     "spellcheck/spell-checker": [
       "warn",
       {
@@ -28,11 +32,27 @@
           "hunspellchecker",
           "hunspell",
           "utils",
-          "urlencoded"
+          "urlencoded",
+          "mongo",
+          "uri",
+          "mongodb",
+          "timestamps",
+          "enum"
         ],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "minLength": 3
       }
-    ]
+    ],
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": false,
+        "optionalDependencies": false,
+        "peerDependencies": false
+      }
+    ],
+    "import/prefer-default-export": ["off"],
+    "no-param-reassign": [2, { "props": false }],
+    "no-underscore-dangle": ["error", { "allow": ["_id", "__v"] }]
   }
 }

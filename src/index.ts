@@ -1,16 +1,11 @@
-import express from 'express'
-import { Server } from 'http'
+import { config } from './config'
 import { db } from './services/db'
+import Server from './services/server'
 
-const app: express.Application = express()
-const PORT = process.env.PORT || 8080
+const { PORT } = config
 
-const server: Server = app.listen(PORT, () => {
-  console.log('Server started on port', PORT)
+Server.listen(PORT, () => {
+  console.log(`Servidor inicializado en http://localhost:${PORT}`)
+  db.connect()
 })
-server.on('error', error => console.log('Error on server:', error))
-
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
-
-db.connect()
+Server.on('error', error => console.error(`Error en el servidor: ${error}`))

@@ -1,5 +1,5 @@
 import { IShow, IShowMongo } from '@/common/interfaces/shows'
-import { ShowsModel } from '@/models/show'
+import { ShowsModel } from '@/models/showModel'
 
 // TODO Add tests for this class
 export class SeedData {

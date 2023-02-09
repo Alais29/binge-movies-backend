@@ -37,7 +37,8 @@
           "uri",
           "mongodb",
           "timestamps",
-          "enum"
+          "enum",
+          "supertest"
         ],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "minLength": 3

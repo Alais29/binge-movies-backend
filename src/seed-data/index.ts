@@ -1,4 +1,5 @@
 import { IShow, IShowMongo } from '@/common/interfaces/shows'
+import { config } from '@/config'
 import { ShowsModel } from '@/models/showModel'
 
 // TODO Add tests for this class
@@ -15,6 +16,6 @@ export class SeedData {
 
     console.log(`✅ Seed Data Inserted: ${shows.length} Shows`)
     console.log('👋 Please start the process with `yarn dev` or `npm run dev`')
-    process.exit()
+    if (config.NODE_ENV !== 'test') process.exit()
   }
 }

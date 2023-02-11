@@ -1,8 +1,10 @@
 import { Request, Response } from 'express'
-import { shows } from '@/seed-data/data'
+import { IShowMongo } from '@/common/interfaces/shows'
+import { showsModelDb } from '@/models/showModel'
 
 export abstract class ShowsController {
-  public static getShows(req: Request, res: Response) {
+  public static async getShows(req: Request, res: Response) {
+    const shows: IShowMongo = await showsModelDb.get()
     res.json({ data: shows })
   }
 }

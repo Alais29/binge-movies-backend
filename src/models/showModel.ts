@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { IShow, IShowMongo } from '@/common/interfaces/shows'
 
 const ShowSchema = new mongoose.Schema(
   {
@@ -62,4 +63,19 @@ ShowSchema.set('toJSON', {
   },
 })
 
-export const ShowsModel = mongoose.model('Show', ShowSchema)
+export const ShowsModel = mongoose.model<IShow>('Show', ShowSchema)
+
+class ShowsModelDb {
+  private shows
+
+  constructor() {
+    this.shows = ShowsModel
+  }
+
+  async get(): Promise<IShowMongo> {
+    const shows: IShowMongo[] = await this.shows.find()
+    return shows as unknown as IShowMongo
+  }
+}
+
+export const showsModelDb = new ShowsModelDb()

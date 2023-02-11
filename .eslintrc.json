@@ -38,7 +38,9 @@
           "mongodb",
           "timestamps",
           "enum",
-          "supertest"
+          "supertest",
+          "mongoserver",
+          "argv"
         ],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "minLength": 3

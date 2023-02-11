@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { MongoMemoryServer } from 'mongodb-memory-server'
 import { config } from '@/config'
 import { SeedData } from '@/seed-data'
 import { shows } from '@/seed-data/data'
@@ -10,10 +11,26 @@ class MongoDatabase {
     this.uri = uri
   }
 
-  connect() {
+  mongoTestServer = async () => {
+    const instance = await MongoMemoryServer.create()
+    const uri = instance.getUri()
+    return uri.slice(0, uri.lastIndexOf('/'))
+  }
+
+  getMongoUrl = async (): Promise<string> => {
+    if (config.NODE_ENV === 'test') {
+      const mongoserver = await this.mongoTestServer()
+      console.log('Using mock database')
+      return `${mongoserver}/${config.MONGODB_NAME}`
+    }
+    return this.uri
+  }
+
+  async connect() {
     mongoose.set('strictQuery', true)
-    mongoose
-      .connect(this.uri)
+    const uri = await this.getMongoUrl()
+    return mongoose
+      .connect(uri)
       .then(() => {
         console.log('Mongo database connected')
         if (process.argv.includes('--seed-data')) {

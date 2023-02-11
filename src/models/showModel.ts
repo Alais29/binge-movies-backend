@@ -39,7 +39,7 @@ const ShowSchema = new mongoose.Schema(
       require: true,
     },
     trailer: {
-      type: [String],
+      type: String,
       default: null,
     },
     score: {

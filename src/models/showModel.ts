@@ -72,9 +72,10 @@ class ShowsModelDb {
     this.shows = ShowsModel
   }
 
-  async get(): Promise<IShowMongo> {
+  // TODO Add error handler
+  async get(): Promise<IShowMongo[]> {
     const shows: IShowMongo[] = await this.shows.find()
-    return shows as unknown as IShowMongo
+    return shows
   }
 }
 

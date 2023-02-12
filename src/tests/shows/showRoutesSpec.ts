@@ -4,13 +4,17 @@ import { shows } from '@/seed-data/data'
 import { db } from '@/services/db'
 import { SeedData } from '@/seed-data'
 
-describe('Shows api tests', () => {
+describe('Shows routes success responses', () => {
   let request: SuperAgentTest
 
   beforeAll(async () => {
     request = supertest.agent(Server)
     await db.connect()
     await SeedData.insertShows(shows)
+  })
+
+  afterAll(async () => {
+    await db.close()
   })
 
   it('GET: /api/shows should return a list of shows', async () => {

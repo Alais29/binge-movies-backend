@@ -2,7 +2,6 @@ import { IShow, IShowMongo } from '@/common/interfaces/shows'
 import { config } from '@/config'
 import { ShowsModel } from '@/models/showModel'
 
-// TODO Add tests for this class
 export class SeedData {
   static async insertShows(shows: IShow[]): Promise<void> {
     console.log(`🌱 Inserting Seed Data: ${shows.length} Shows`)

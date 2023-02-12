@@ -7,13 +7,17 @@ import { shows } from '@/seed-data/data'
 class MongoDatabase {
   private uri: string
 
+  private mongoMockInstance: null | MongoMemoryServer
+
   constructor(uri: string = 'mongodb_uri') {
     this.uri = uri
+    this.mongoMockInstance = null
   }
 
   mongoTestServer = async () => {
     const instance = await MongoMemoryServer.create()
     const uri = instance.getUri()
+    this.mongoMockInstance = instance
     return uri.slice(0, uri.lastIndexOf('/'))
   }
 
@@ -40,6 +44,15 @@ class MongoDatabase {
       .catch(e =>
         console.log('There was an error when connecting to the database', e),
       )
+  }
+
+  async close() {
+    if (config.NODE_ENV === 'test') {
+      await (this.mongoMockInstance as MongoMemoryServer).stop()
+      await mongoose.disconnect()
+    } else {
+      await mongoose.disconnect()
+    }
   }
 }
 

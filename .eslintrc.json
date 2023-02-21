@@ -13,6 +13,11 @@
   },
   "plugins": ["@typescript-eslint", "spellcheck"],
   "rules": {
+    "no-unused-vars": ["error", { "argsIgnorePattern": "next" }],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      { "argsIgnorePattern": "next" }
+    ],
     "import/extensions": [
       "error",
       "ignorePackages",
@@ -40,7 +45,9 @@
           "enum",
           "supertest",
           "mongoserver",
-          "argv"
+          "argv",
+          "req",
+          "res"
         ],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "minLength": 3

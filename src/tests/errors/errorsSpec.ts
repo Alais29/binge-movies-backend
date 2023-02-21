@@ -1,6 +1,6 @@
 import { CustomError } from '@/errors/CustomError'
 
-fdescribe('CustomError class:', () => {
+describe('CustomError class:', () => {
   it('should return the status code established on the constructor or 500 if no code is passed', () => {
     const error = new CustomError(400)
     const error2 = new CustomError()

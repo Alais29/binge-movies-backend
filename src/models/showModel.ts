@@ -1,5 +1,7 @@
 import mongoose from 'mongoose'
 import { IShow, IShowMongo } from '@/common/interfaces/shows'
+import { CustomError } from '@/errors/CustomError'
+import { EErrorCodes } from '@/common/enums/errors'
 
 const ShowSchema = new mongoose.Schema(
   {
@@ -72,10 +74,17 @@ class ShowsModelDb {
     this.shows = ShowsModel
   }
 
-  // TODO Add error handler
   async get(): Promise<IShowMongo[]> {
-    const shows: IShowMongo[] = await this.shows.find()
-    return shows
+    try {
+      const shows: IShowMongo[] = await this.shows.find()
+      return shows
+    } catch (error) {
+      throw new CustomError(
+        500,
+        'Something went wrong',
+        `-${EErrorCodes.GetProductsError}`,
+      )
+    }
   }
 }
 

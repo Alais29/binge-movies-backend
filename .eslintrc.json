@@ -47,7 +47,8 @@
           "mongoserver",
           "argv",
           "req",
-          "res"
+          "res",
+          "cors"
         ],
         "skipIfMatch": ["http://[^s]*", "^[-\\w]+/[-\\w\\.]+$"],
         "minLength": 3

@@ -18,17 +18,19 @@
   "author": "Alfonsina Lizardo",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "jasmine": "4.5.0",
     "jasmine-spec-reporter": "^7.0.0",
+    "mongodb-memory-server": "^8.11.4",
     "mongoose": "^6.9.0",
-    "supertest": "^6.1.3",
-    "mongodb-memory-server": "^8.11.4"
+    "supertest": "^6.1.3"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
+    "@types/cors": "^2.8.13",
     "@types/express": "^4.17.11",
     "@types/jasmine": "^3.7.1",
     "@types/node": "^15.0.2",

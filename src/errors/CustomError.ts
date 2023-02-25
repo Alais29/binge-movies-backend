@@ -3,13 +3,13 @@ export class CustomError extends Error {
 
   public message
 
-  public errorCode
+  public error
 
-  constructor(statusCode = 500, message = 'Unknown Error', errorCode = '0') {
+  constructor(statusCode = 500, message = 'Unknown Error', error = '0') {
     super()
     this.statusCode = statusCode
     this.message = message
-    this.errorCode = errorCode
+    this.error = error
     Error.captureStackTrace(this)
   }
 }

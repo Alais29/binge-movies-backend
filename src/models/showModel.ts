@@ -89,14 +89,14 @@ class ShowsModelDb {
       if (error instanceof mongoose.Error.CastError) {
         throw new CustomError(
           404,
-          'Product not found',
-          `-${EErrorCodes.GetProductsError}`,
+          error.message,
+          `-${EErrorCodes.ShowNotFound}`,
         )
       } else {
         throw new CustomError(
           500,
-          'There was an issue loading the products, please try again later',
-          `-${EErrorCodes.GetProductsError}`,
+          'There was an issue loading the shows, please try again later',
+          `-${EErrorCodes.GetShowsError}`,
         )
       }
     }

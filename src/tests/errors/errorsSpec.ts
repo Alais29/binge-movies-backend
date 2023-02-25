@@ -19,7 +19,7 @@ describe('CustomError class:', () => {
     const error = new CustomError(400, 'Show not found', '-1')
     const error2 = new CustomError()
 
-    expect(error.errorCode).toBe('-1')
-    expect(error2.errorCode).toBe('0')
+    expect(error.error).toBe('-1')
+    expect(error2.error).toBe('0')
   })
 })

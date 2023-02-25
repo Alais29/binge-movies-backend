@@ -74,16 +74,31 @@ class ShowsModelDb {
     this.shows = ShowsModel
   }
 
-  async get(): Promise<IShowMongo[]> {
+  async get(id?: string): Promise<IShowMongo | IShowMongo[]> {
     try {
-      const shows: IShowMongo[] = await this.shows.find()
-      return shows
+      let result: IShowMongo | IShowMongo[] = []
+      if (id) {
+        const show = await this.shows.findById(id)
+        if (show) result = show as unknown as IShowMongo
+      } else {
+        const shows: IShowMongo[] = await this.shows.find()
+        result = shows
+      }
+      return result
     } catch (error) {
-      throw new CustomError(
-        500,
-        'Something went wrong',
-        `-${EErrorCodes.GetProductsError}`,
-      )
+      if (error instanceof mongoose.Error.CastError) {
+        throw new CustomError(
+          404,
+          'Product not found',
+          `-${EErrorCodes.GetProductsError}`,
+        )
+      } else {
+        throw new CustomError(
+          500,
+          'There was an issue loading the products, please try again later',
+          `-${EErrorCodes.GetProductsError}`,
+        )
+      }
     }
   }
 }

@@ -22,4 +22,13 @@ describe('Shows routes success responses', () => {
     expect(response.statusCode).toBe(200)
     expect(response.body.data.length).not.toBe(0)
   })
+
+  it('GET: /api/shows/:id should return a show by its id', async () => {
+    const response = await request.get('/api/shows')
+    const showId = response.body.data[0].id
+
+    const showResponse = await request.get(`/api/shows/${showId}`)
+    expect(showResponse.statusCode).toBe(200)
+    expect(showId).toEqual(showResponse.body.data.id)
+  })
 })

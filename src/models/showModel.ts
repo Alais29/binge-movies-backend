@@ -1,5 +1,5 @@
-import mongoose from 'mongoose'
-import { IShow, IShowMongo } from '@/common/interfaces/shows'
+import mongoose, { FilterQuery } from 'mongoose'
+import { IShow, IShowMongo, IShowQuery } from '@/common/interfaces/shows'
 import { CustomError } from '@/errors/CustomError'
 import { EErrorCodes } from '@/common/enums/errors'
 
@@ -100,6 +100,16 @@ class ShowsModelDb {
         )
       }
     }
+  }
+
+  async query(options: IShowQuery): Promise<IShow[]> {
+    const query: FilterQuery<IShowQuery> = {}
+
+    if (options.category) query.category = options.category
+
+    const shows = await this.shows.find(query)
+
+    return shows as IShow[]
   }
 }
 

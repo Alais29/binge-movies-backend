@@ -1,4 +1,5 @@
 import { Document } from 'mongoose'
+import { IObject } from './others'
 
 export interface IShow {
   title: string
@@ -16,4 +17,8 @@ export interface IShow {
 export interface IShowMongo extends IShow, Document {
   createdAt: NativeDate
   updatedAt: NativeDate
+}
+
+export interface IShowQuery extends IObject {
+  category?: string
 }

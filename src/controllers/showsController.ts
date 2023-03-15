@@ -4,7 +4,6 @@ import { isEmpty } from '@/utils/isEmpty'
 
 export abstract class ShowsController {
   public static async getShows(req: Request, res: Response): Promise<void> {
-    // TODO: implement proper query from the database
     if (!isEmpty(req.query)) {
       const category = req.query.category
         ? (req.query.category as string).replace('-', ' ')

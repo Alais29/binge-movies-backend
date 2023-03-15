@@ -1,9 +1,10 @@
 import express from 'express'
+import authRouter from './authRoutes'
 import showsRouter from './showsRoutes'
 
 const router = express.Router()
 
 router.use('/shows', showsRouter)
-// TODO add routes for users and auth
+router.use('/auth', authRouter)
 
 export default router

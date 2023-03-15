@@ -3,4 +3,7 @@ export enum EErrorCodes {
   UnauthorizedRoute,
   GetShowsError,
   ShowNotFound,
+  UserSignUpError,
+  UserNotFound,
+  UserLoginError,
 }

@@ -1,17 +1,26 @@
 import passport from 'passport'
-import passportLocal, { IStrategyOptions } from 'passport-local'
+import passportLocal, {
+  // IStrategyOptions,
+  IStrategyOptionsWithRequest,
+} from 'passport-local'
 import { Strategy, ExtractJwt } from 'passport-jwt'
+import { Request } from 'express'
 import { usersModelDb } from '@/models/userModel'
 import { IUser } from '@/common/interfaces/users'
+import { config } from '@/config'
+import { CustomError } from '@/errors/CustomError'
+import { EErrorCodes } from '@/common/enums/errors'
 
 const LocalStrategy = passportLocal.Strategy
 
-const strategyOptions: IStrategyOptions = {
+const strategyOptions: IStrategyOptionsWithRequest = {
   usernameField: 'email',
   passwordField: 'password',
+  passReqToCallback: true,
 }
 
 const signupFunction = async (
+  req: Request,
   email: string,
   password: string,
   done: (
@@ -22,8 +31,14 @@ const signupFunction = async (
   // eslint-disable-next-line consistent-return
 ): Promise<void> => {
   try {
+    if (password !== req.body.confirmPassword) {
+      throw new CustomError(
+        400,
+        "The passwords don't match",
+        `-${EErrorCodes.UserSignUpError}`,
+      )
+    }
     const user = await usersModelDb.save({ email, password })
-
     return done(null, user)
   } catch (error) {
     done(error)
@@ -31,6 +46,7 @@ const signupFunction = async (
 }
 
 const loginFunction = async (
+  req: Request,
   email: string,
   password: string,
   done: (
@@ -41,11 +57,6 @@ const loginFunction = async (
 ) => {
   try {
     const user = await usersModelDb.query(email)
-
-    if (!user) {
-      console.log(`Login failed for user ${email}: User doesn't exist`)
-      return done(null, false)
-    }
 
     if (!(await user.isValidPassword(password))) {
       console.log(`Login failed for user ${email}: password is incorrect`)
@@ -64,7 +75,7 @@ passport.use('login', new LocalStrategy(strategyOptions, loginFunction))
 passport.use(
   new Strategy(
     {
-      secretOrKey: 'TOP_SECRET',
+      secretOrKey: config.JWT_SECRET,
       jwtFromRequest: ExtractJwt.fromUrlQueryParameter('secret_token'),
     },
     async (

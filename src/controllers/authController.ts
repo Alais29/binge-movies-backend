@@ -39,9 +39,12 @@ export abstract class AuthController {
     passport.authenticate('login', async (err: any, user: any) => {
       try {
         if (err || !user) {
+          console.log(
+            `Login failed for user ${req.body.email}: User doesn't exist`,
+          )
           const error = new CustomError(
             500,
-            'There was an issue signing you up, please try again later',
+            'There was an issue logging you in, please check your email and password',
             `-${EErrorCodes.UserLoginError}`,
           )
 

@@ -5,4 +5,5 @@ export const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
   MONGODB_NAME: process.env.MONGODB_NAME || '',
   MONGODB_URI: process.env.MONGODB_URI,
+  JWT_SECRET: process.env.JWT_SECRET,
 }

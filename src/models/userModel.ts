@@ -1,4 +1,4 @@
-import mongoose from 'mongoose'
+import mongoose, { Error } from 'mongoose'
 import bcrypt from 'bcrypt'
 import { IUser, IUserMongo } from '@/common/interfaces/users'
 import { EErrorCodes } from '@/common/enums/errors'
@@ -40,7 +40,7 @@ UserSchema.set('toJSON', {
   },
 })
 
-export const UserModel = mongoose.model<IUserMongo>('User', UserSchema)
+export const UserModel = mongoose.model<IUser>('User', UserSchema)
 
 class UsersModelDb {
   private users
@@ -54,6 +54,13 @@ class UsersModelDb {
       const newUser = await this.users.create(userData)
       return newUser
     } catch (error) {
+      if ((error as Error).message.includes('duplicate')) {
+        throw new CustomError(
+          409,
+          'The user already exists',
+          `-${EErrorCodes.UserSignUpError}`,
+        )
+      }
       throw new CustomError(
         500,
         'There was an issue signing you up, please try again later',
@@ -65,7 +72,7 @@ class UsersModelDb {
   async query(email: string): Promise<IUserMongo> {
     try {
       const user = await this.users.findOne({ email })
-      if (user !== null) return user
+      if (user !== null) return user as IUserMongo
       throw new CustomError(
         404,
         `-${EErrorCodes.UserNotFound}`,

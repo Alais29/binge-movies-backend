@@ -39,6 +39,8 @@ const signupFunction = async (
       )
     }
     const user = await usersModelDb.save({ email, password })
+
+    console.log(`Signup successful for user ${email}, ${new Date()}`)
     return done(null, user)
   } catch (error) {
     done(error)

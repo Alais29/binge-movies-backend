@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import passport from '@/middlewares/auth'
 import { CustomError } from '@/errors/CustomError'
 import { EErrorCodes } from '@/common/enums/errors'
+import { config } from '@/config'
 
 export abstract class AuthController {
   public static async signupUser(
@@ -14,18 +15,22 @@ export abstract class AuthController {
       'signup',
       // eslint-disable-next-line consistent-return
       (err: any, user: any, info: { message: string | undefined }) => {
-        if (err) {
-          console.log('Error signing up user')
-          return next(err)
+        try {
+          if (err) {
+            console.log('Error signing up user')
+            throw new Error(err)
+          }
+          if (!user) {
+            throw new CustomError(
+              500,
+              `${EErrorCodes.UserSignUpError}`,
+              info.message,
+            )
+          }
+          res.status(201).json({ message: 'Successful Signup!' })
+        } catch (error) {
+          return next(error)
         }
-        if (!user) {
-          throw new CustomError(
-            500,
-            `${EErrorCodes.UserSignUpError}`,
-            info.message,
-          )
-        }
-        res.status(201).json({ message: 'Successful Signup!' })
       },
     )(req, res, next)
   }
@@ -55,10 +60,9 @@ export abstract class AuthController {
           if (error) return next(error)
 
           const body = { id: user.id, email: user.email }
-          // TODO: change string to sign the token
-          const token = jwt.sign({ user: body }, 'TOP_SECRET')
+          const token = jwt.sign({ user: body }, config.JWT_SECRET)
 
-          return res.json({ token })
+          return res.status(200).json({ token })
         })
       } catch (error) {
         return next(error)

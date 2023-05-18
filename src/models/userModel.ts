@@ -72,21 +72,17 @@ class UsersModelDb {
   async query(email: string): Promise<IUserMongo> {
     try {
       const user = await this.users.findOne({ email })
-      if (user !== null) return user as IUserMongo
-      throw new CustomError(
-        404,
-        `-${EErrorCodes.UserNotFound}`,
-        'User not found',
-      )
+      if (!user) {
+        throw new CustomError(
+          500,
+          'There was an issue logging you in, please check your email and password',
+          `-${EErrorCodes.UserNotFound}`,
+        )
+      }
+      return user as IUserMongo
     } catch (error) {
       if (error instanceof CustomError) {
         throw error
-      } else if (error instanceof mongoose.Error.CastError) {
-        throw new CustomError(
-          404,
-          `-${EErrorCodes.UserNotFound}`,
-          'User not found',
-        )
       } else {
         throw new CustomError(
           500,

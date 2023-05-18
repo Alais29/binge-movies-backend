@@ -18,7 +18,7 @@ export abstract class AuthController {
         try {
           if (err) {
             console.log('Error signing up user')
-            throw new Error(err)
+            throw err
           }
           if (!user) {
             throw new CustomError(
@@ -47,13 +47,8 @@ export abstract class AuthController {
           console.log(
             `Login failed for user ${req.body.email}: User doesn't exist`,
           )
-          const error = new CustomError(
-            500,
-            'There was an issue logging you in, please check your email and password',
-            `-${EErrorCodes.UserLoginError}`,
-          )
 
-          return next(error)
+          return next(err)
         }
 
         req.login(user, { session: false }, async error => {

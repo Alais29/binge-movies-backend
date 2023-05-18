@@ -6,7 +6,7 @@ export class CustomError extends Error {
   public error
 
   constructor(statusCode = 500, message = 'Unknown Error', error = '0') {
-    super()
+    super(error)
     this.statusCode = statusCode
     this.message = message
     this.error = error

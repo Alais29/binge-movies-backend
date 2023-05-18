@@ -89,7 +89,7 @@ class ShowsModelDb {
       if (error instanceof mongoose.Error.CastError) {
         throw new CustomError(
           404,
-          error.message,
+          "The show doesn't exist",
           `-${EErrorCodes.ShowNotFound}`,
         )
       } else {

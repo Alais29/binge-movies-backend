@@ -56,7 +56,7 @@ class UsersModelDb {
     } catch (error) {
       if ((error as Error).message.includes('duplicate')) {
         throw new CustomError(
-          409,
+          400,
           'The user already exists',
           `-${EErrorCodes.UserSignUpError}`,
         )
@@ -74,7 +74,7 @@ class UsersModelDb {
       const user = await this.users.findOne({ email })
       if (!user) {
         throw new CustomError(
-          500,
+          400,
           'There was an issue logging you in, please check your email and password',
           `-${EErrorCodes.UserNotFound}`,
         )

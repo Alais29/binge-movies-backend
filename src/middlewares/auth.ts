@@ -31,6 +31,15 @@ const signupFunction = async (
   // eslint-disable-next-line consistent-return
 ): Promise<void> => {
   try {
+    const isValidEmail = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(email)
+    if (!isValidEmail) {
+      throw new CustomError(
+        400,
+        'The email is not valid',
+        `-${EErrorCodes.UserSignUpError}`,
+      )
+    }
+
     if (password !== req.body.confirmPassword) {
       throw new CustomError(
         400,
@@ -62,7 +71,11 @@ const loginFunction = async (
 
     if (!(await user.isValidPassword(password))) {
       console.log(`Login failed for user ${email}: password is incorrect`)
-      return done(null, false)
+      throw new CustomError(
+        400,
+        "The passwords don't match",
+        `-${EErrorCodes.UserLoginError}`,
+      )
     }
 
     console.log(`Login successful for user ${email}, ${new Date()}`)

@@ -23,8 +23,8 @@ export abstract class AuthController {
           if (!user) {
             throw new CustomError(
               500,
-              `${EErrorCodes.UserSignUpError}`,
               info.message,
+              `-${EErrorCodes.UserSignUpError}`,
             )
           }
           res.status(201).json({ message: 'Successful Signup!' })
@@ -47,7 +47,6 @@ export abstract class AuthController {
           console.log(
             `Login failed for user ${req.body.email}: User doesn't exist`,
           )
-
           return next(err)
         }
 

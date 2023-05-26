@@ -1,8 +1,5 @@
 import passport from 'passport'
-import passportLocal, {
-  // IStrategyOptions,
-  IStrategyOptionsWithRequest,
-} from 'passport-local'
+import passportLocal, { IStrategyOptionsWithRequest } from 'passport-local'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { Request } from 'express'
 import { usersModelDb } from '@/models/userModel'
@@ -47,7 +44,7 @@ const signupFunction = async (
         `-${EErrorCodes.UserSignUpError}`,
       )
     }
-    const user = await usersModelDb.save({ email, password })
+    const user = await usersModelDb.save({ email, password, favoriteShows: [] })
 
     console.log(`Signup successful for user ${email}, ${new Date()}`)
     return done(null, user)

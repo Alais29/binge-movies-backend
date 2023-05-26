@@ -3,6 +3,8 @@ import bcrypt from 'bcrypt'
 import { IUser, IUserMongo } from '@/common/interfaces/users'
 import { EErrorCodes } from '@/common/enums/errors'
 import { CustomError } from '@/errors/CustomError'
+import { ShowsModel } from './showModel'
+import { IShowMongo } from '@/common/interfaces/shows'
 
 const { Schema } = mongoose
 
@@ -16,6 +18,7 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
+  favoriteShows: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Show' }],
 })
 
 UserSchema.pre('save', async function encryptPw(next) {
@@ -45,8 +48,11 @@ export const UserModel = mongoose.model<IUser>('User', UserSchema)
 class UsersModelDb {
   private users
 
+  private shows
+
   constructor() {
     this.users = UserModel
+    this.shows = ShowsModel
   }
 
   async save(userData: IUser): Promise<IUser> {
@@ -83,6 +89,78 @@ class UsersModelDb {
     } catch (error) {
       if (error instanceof CustomError) {
         throw error
+      } else {
+        throw new CustomError(
+          500,
+          'There was an issue with the service. Please try again later',
+        )
+      }
+    }
+  }
+
+  async getUserFavoriteShows(email: string): Promise<IUserMongo> {
+    try {
+      const user = await this.users.findOne({ email }).populate('favoriteShows')
+
+      if (!user) {
+        throw new CustomError(
+          400,
+          'There was an issue getting the user, verify that the user exists.',
+          `-${EErrorCodes.UserNotFound}`,
+        )
+      }
+
+      return user as IUserMongo
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error
+      } else {
+        throw new CustomError(
+          500,
+          'There was an issue with the service. Please try again later',
+        )
+      }
+    }
+  }
+
+  async addToUserFavoriteShows(
+    email: string,
+    showId: string,
+  ): Promise<IShowMongo[]> {
+    try {
+      const user = await this.users.findOne({ email })
+      const show = await this.shows.findById(showId)
+
+      if (!user) {
+        throw new CustomError(
+          400,
+          'There was an issue adding the show, verify that both the user and show exist.',
+          `-${EErrorCodes.UserNotFound}`,
+        )
+      }
+
+      if (user.favoriteShows.includes(show?.id)) {
+        throw new CustomError(
+          400,
+          'The show is already in the favorites list.',
+          `-${EErrorCodes.ShowAlreadyInFavorites}`,
+        )
+      }
+
+      user.favoriteShows = user.favoriteShows.concat(show?.id)
+      await user.save()
+      const updatedUser = await user.populate('favoriteShows')
+
+      return updatedUser.favoriteShows
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error
+      } else if (error instanceof mongoose.Error.CastError) {
+        throw new CustomError(
+          400,
+          'There was an issue adding the show, verify that both the user and show exist.',
+          `-${EErrorCodes.ShowNotFound}`,
+        )
       } else {
         throw new CustomError(
           500,

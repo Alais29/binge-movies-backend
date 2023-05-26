@@ -6,4 +6,6 @@ export enum EErrorCodes {
   UserSignUpError,
   UserNotFound,
   UserLoginError,
+  UserAddToFavoriteError,
+  ShowAlreadyInFavorites,
 }

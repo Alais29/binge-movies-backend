@@ -17,8 +17,7 @@ export abstract class AuthController {
       (err: any, user: any, info: { message: string | undefined }) => {
         try {
           if (err) {
-            console.log('Error signing up user')
-            throw err
+            return next(err)
           }
           if (!user) {
             throw new CustomError(
@@ -43,10 +42,7 @@ export abstract class AuthController {
     // eslint-disable-next-line consistent-return
     passport.authenticate('login', async (err: any, user: any) => {
       try {
-        if (err || !user) {
-          console.log(
-            `Login failed for user ${req.body.email}: User doesn't exist`,
-          )
+        if (err) {
           return next(err)
         }
 

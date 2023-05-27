@@ -70,14 +70,26 @@ const loginFunction = async (
       console.log(`Login failed for user ${email}: password is incorrect`)
       throw new CustomError(
         400,
-        "The passwords don't match",
+        'There was an issue logging you in, please check your email and password',
         `-${EErrorCodes.UserLoginError}`,
       )
     }
-
     console.log(`Login successful for user ${email}, ${new Date()}`)
     return done(null, user, { message: 'Logged in Successfully' })
   } catch (error) {
+    if (
+      error instanceof CustomError &&
+      error.error === `-${EErrorCodes.UserNotFound}`
+    ) {
+      console.log(`Login failed for user ${email}: user does not exist`)
+      return done(
+        new CustomError(
+          400,
+          'There was an issue logging you in, please check your email and password',
+          `-${EErrorCodes.UserNotFound}`,
+        ),
+      )
+    }
     return done(error)
   }
 }

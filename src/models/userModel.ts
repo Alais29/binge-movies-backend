@@ -81,7 +81,7 @@ class UsersModelDb {
       if (!user) {
         throw new CustomError(
           400,
-          'There was an issue logging you in, please check your email and password',
+          'User does not exist.',
           `-${EErrorCodes.UserNotFound}`,
         )
       }

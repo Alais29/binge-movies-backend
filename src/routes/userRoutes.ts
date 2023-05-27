@@ -8,6 +8,9 @@ userRouter.post(
   '/favorite-shows',
   asyncHandler(UserController.addFavoriteShows),
 )
-// userRouter.get('/:id', asyncHandler(UserController.getShow))
+userRouter.get(
+  '/:userId/favorite-shows',
+  asyncHandler(UserController.getFavoriteShows),
+)
 
 export default userRouter

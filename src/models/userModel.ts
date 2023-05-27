@@ -4,7 +4,7 @@ import { IUser, IUserMongo } from '@/common/interfaces/users'
 import { EErrorCodes } from '@/common/enums/errors'
 import { CustomError } from '@/errors/CustomError'
 import { ShowsModel } from './showModel'
-import { IShowMongo } from '@/common/interfaces/shows'
+import { IShow, IShowMongo } from '@/common/interfaces/shows'
 
 const { Schema } = mongoose
 
@@ -98,9 +98,11 @@ class UsersModelDb {
     }
   }
 
-  async getUserFavoriteShows(email: string): Promise<IUserMongo> {
+  async getUserFavoriteShows(userId: string): Promise<IShow[]> {
     try {
-      const user = await this.users.findOne({ email }).populate('favoriteShows')
+      const user = await this.users
+        .findOne({ id: userId })
+        .populate('favoriteShows')
 
       if (!user) {
         throw new CustomError(
@@ -110,7 +112,7 @@ class UsersModelDb {
         )
       }
 
-      return user as IUserMongo
+      return user.favoriteShows
     } catch (error) {
       if (error instanceof CustomError) {
         throw error
@@ -124,11 +126,11 @@ class UsersModelDb {
   }
 
   async addToUserFavoriteShows(
-    email: string,
+    userId: string,
     showId: string,
   ): Promise<IShowMongo[]> {
     try {
-      const user = await this.users.findOne({ email })
+      const user = await this.users.findOne({ id: userId })
       const show = await this.shows.findById(showId)
 
       if (!user) {
@@ -139,10 +141,10 @@ class UsersModelDb {
         )
       }
 
-      if (user.favoriteShows.includes(show?.id)) {
+      if (user?.favoriteShows.includes(show?.id)) {
         throw new CustomError(
           400,
-          'The show is already in the favorites list.',
+          'The show is already in the user favorites list.',
           `-${EErrorCodes.ShowAlreadyInFavorites}`,
         )
       }

@@ -100,22 +100,16 @@ class UsersModelDb {
 
   async getUserFavoriteShows(userId: string): Promise<IShow[]> {
     try {
-      const user = await this.users
-        .findOne({ id: userId })
-        .populate('favoriteShows')
+      const user = await this.users.findById(userId).populate('favoriteShows')
 
-      if (!user) {
+      return user?.favoriteShows as IShow[]
+    } catch (error) {
+      if (error instanceof mongoose.Error.CastError) {
         throw new CustomError(
           400,
           'There was an issue getting the user, verify that the user exists.',
           `-${EErrorCodes.UserNotFound}`,
         )
-      }
-
-      return user.favoriteShows
-    } catch (error) {
-      if (error instanceof CustomError) {
-        throw error
       } else {
         throw new CustomError(
           500,
@@ -130,16 +124,8 @@ class UsersModelDb {
     showId: string,
   ): Promise<IShowMongo[]> {
     try {
-      const user = await this.users.findOne({ id: userId })
+      const user = await this.users.findById(userId)
       const show = await this.shows.findById(showId)
-
-      if (!user) {
-        throw new CustomError(
-          400,
-          'There was an issue adding the show, verify that both the user and show exist.',
-          `-${EErrorCodes.UserNotFound}`,
-        )
-      }
 
       if (user?.favoriteShows.includes(show?.id)) {
         throw new CustomError(
@@ -149,19 +135,24 @@ class UsersModelDb {
         )
       }
 
-      user.favoriteShows = user.favoriteShows.concat(show?.id)
-      await user.save()
-      const updatedUser = await user.populate('favoriteShows')
+      if (user) {
+        user.favoriteShows = user.favoriteShows.concat(show?.id)
+        await user.save()
+      }
+      const updatedUser = await user?.populate('favoriteShows')
 
-      return updatedUser.favoriteShows
+      return updatedUser?.favoriteShows as IShowMongo[]
     } catch (error) {
       if (error instanceof CustomError) {
         throw error
       } else if (error instanceof mongoose.Error.CastError) {
+        const isUserError = error.message.includes('User')
         throw new CustomError(
           400,
           'There was an issue adding the show, verify that both the user and show exist.',
-          `-${EErrorCodes.ShowNotFound}`,
+          `-${
+            isUserError ? EErrorCodes.UserNotFound : EErrorCodes.ShowNotFound
+          }`,
         )
       } else {
         throw new CustomError(

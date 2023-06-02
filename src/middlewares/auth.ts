@@ -100,10 +100,10 @@ passport.use(
   new Strategy(
     {
       secretOrKey: config.JWT_SECRET,
-      jwtFromRequest: ExtractJwt.fromUrlQueryParameter('secret_token'),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     },
     async (
-      token: { user: IUser },
+      payload: { user: IUser; expire: number },
       done: (
         error: any,
         user?: any,
@@ -112,7 +112,13 @@ passport.use(
       // eslint-disable-next-line consistent-return
     ) => {
       try {
-        return done(null, token.user)
+        if (payload.expire < Date.now())
+          throw new CustomError(
+            401,
+            'Token expired',
+            `-${EErrorCodes.TokenExpired}`,
+          )
+        return done(null, payload.user)
       } catch (error) {
         done(error)
       }

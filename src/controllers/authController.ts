@@ -50,7 +50,8 @@ export abstract class AuthController {
           if (error) return next(error)
 
           const body = { id: user.id, email: user.email }
-          const token = jwt.sign({ user: body }, config.JWT_SECRET)
+          const expire = Date.now() + 60 * 60 * 1000
+          const token = jwt.sign({ user: body, expire }, config.JWT_SECRET)
 
           return res.status(200).json({ token })
         })

@@ -6,7 +6,8 @@ export abstract class UserController {
     req: Request,
     res: Response,
   ): Promise<void> {
-    const { userId, showId } = req.body
+    const userId = (req.user as Express.User & { id: string })?.id
+    const { showId } = req.body
     const result = await usersModelDb.addToUserFavoriteShows(userId, showId)
     res.status(200).json({ data: result })
   }
@@ -15,7 +16,7 @@ export abstract class UserController {
     req: Request,
     res: Response,
   ): Promise<void> {
-    const { userId } = req.params
+    const userId = (req.user as Express.User & { id: string })?.id
     const result = await usersModelDb.getUserFavoriteShows(userId)
     res.status(200).json({ data: result })
   }

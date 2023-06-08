@@ -13,6 +13,7 @@ describe('Auth routes success responses', () => {
     await SeedData.insertUser({
       email: 'test@test.com',
       password: 'password',
+      favoriteShows: [],
     })
   })
 
@@ -51,6 +52,7 @@ describe('Auth routes error responses', () => {
     await SeedData.insertUser({
       email: 'test@test.com',
       password: 'password',
+      favoriteShows: [],
     })
   })
 

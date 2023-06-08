@@ -1,8 +1,5 @@
 import passport from 'passport'
-import passportLocal, {
-  // IStrategyOptions,
-  IStrategyOptionsWithRequest,
-} from 'passport-local'
+import passportLocal, { IStrategyOptionsWithRequest } from 'passport-local'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { Request } from 'express'
 import { usersModelDb } from '@/models/userModel'
@@ -47,7 +44,7 @@ const signupFunction = async (
         `-${EErrorCodes.UserSignUpError}`,
       )
     }
-    const user = await usersModelDb.save({ email, password })
+    const user = await usersModelDb.save({ email, password, favoriteShows: [] })
 
     console.log(`Signup successful for user ${email}, ${new Date()}`)
     return done(null, user)
@@ -73,14 +70,26 @@ const loginFunction = async (
       console.log(`Login failed for user ${email}: password is incorrect`)
       throw new CustomError(
         400,
-        "The passwords don't match",
+        'There was an issue logging you in, please check your email and password',
         `-${EErrorCodes.UserLoginError}`,
       )
     }
-
     console.log(`Login successful for user ${email}, ${new Date()}`)
     return done(null, user, { message: 'Logged in Successfully' })
   } catch (error) {
+    if (
+      error instanceof CustomError &&
+      error.error === `-${EErrorCodes.UserNotFound}`
+    ) {
+      console.log(`Login failed for user ${email}: user does not exist`)
+      return done(
+        new CustomError(
+          400,
+          'There was an issue logging you in, please check your email and password',
+          `-${EErrorCodes.UserNotFound}`,
+        ),
+      )
+    }
     return done(error)
   }
 }
@@ -91,10 +100,10 @@ passport.use(
   new Strategy(
     {
       secretOrKey: config.JWT_SECRET,
-      jwtFromRequest: ExtractJwt.fromUrlQueryParameter('secret_token'),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     },
     async (
-      token: { user: IUser },
+      payload: { user: IUser; expire: number },
       done: (
         error: any,
         user?: any,
@@ -103,7 +112,13 @@ passport.use(
       // eslint-disable-next-line consistent-return
     ) => {
       try {
-        return done(null, token.user)
+        if (payload.expire < Date.now())
+          throw new CustomError(
+            401,
+            'Token expired',
+            `-${EErrorCodes.TokenExpired}`,
+          )
+        return done(null, payload.user)
       } catch (error) {
         done(error)
       }

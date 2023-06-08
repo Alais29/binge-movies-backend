@@ -150,8 +150,48 @@ class UsersModelDb {
       } else if (error instanceof mongoose.Error.CastError) {
         const isUserError = error.message.includes('User')
         throw new CustomError(
-          400,
+          404,
           'There was an issue adding the show, verify that both the user and show exist.',
+          `-${
+            isUserError ? EErrorCodes.UserNotFound : EErrorCodes.ShowNotFound
+          }`,
+        )
+      } else {
+        throw new CustomError(
+          500,
+          'There was an issue with the service. Please try again later',
+        )
+      }
+    }
+  }
+
+  async deleteUserFavoriteShows(userId: string, showId: string): Promise<void> {
+    try {
+      const user = await this.users.findById(userId)
+      const show = await this.shows.findById(showId)
+
+      if (!user?.favoriteShows.includes(show?.id)) {
+        throw new CustomError(
+          404,
+          'The show is not in the user favorites list.',
+          `-${EErrorCodes.ShowNotInFavorites}`,
+        )
+      }
+
+      if (user) {
+        user.favoriteShows = user.favoriteShows.filter(
+          id => id.toString() !== showId,
+        )
+        await user.save()
+      }
+    } catch (error) {
+      if (error instanceof CustomError) {
+        throw error
+      } else if (error instanceof mongoose.Error.CastError) {
+        const isUserError = error.message.includes('User')
+        throw new CustomError(
+          404,
+          'There was an issue removing the show, verify that both the user and show exist.',
           `-${
             isUserError ? EErrorCodes.UserNotFound : EErrorCodes.ShowNotFound
           }`,

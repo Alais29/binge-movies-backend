@@ -8,5 +8,6 @@ export enum EErrorCodes {
   UserLoginError,
   UserAddToFavoriteError,
   ShowAlreadyInFavorites,
+  ShowNotInFavorites,
   TokenExpired,
 }

@@ -15,10 +15,10 @@ userRouter.get(
   passport.authenticate('jwt', { session: false }),
   asyncHandler(UserController.getFavoriteShows),
 )
-// userRouter.delete(
-//   '/:userId/favorite-shows/:showId',
-//   passport.authenticate('jwt', { session: false }),
-//   asyncHandler(UserController.deleteFavoriteShows),
-// )
+userRouter.delete(
+  '/favorite-shows/:showId',
+  passport.authenticate('jwt', { session: false }),
+  asyncHandler(UserController.deleteFavoriteShow),
+)
 
 export default userRouter

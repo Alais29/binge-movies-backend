@@ -12,6 +12,16 @@ export abstract class UserController {
     res.status(200).json({ data: result })
   }
 
+  public static async deleteFavoriteShow(
+    req: Request,
+    res: Response,
+  ): Promise<void> {
+    const userId = (req.user as Express.User & { id: string })?.id
+    const { showId } = req.params
+    await usersModelDb.deleteUserFavoriteShows(userId, showId)
+    res.status(204).send()
+  }
+
   public static async getFavoriteShows(
     req: Request,
     res: Response,

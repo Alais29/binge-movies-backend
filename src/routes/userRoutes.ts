@@ -5,7 +5,7 @@ import passport from '@/middlewares/auth'
 
 const userRouter = express.Router()
 
-userRouter.post(
+userRouter.put(
   '/favorite-shows',
   passport.authenticate('jwt', { session: false }),
   asyncHandler(UserController.addFavoriteShows),

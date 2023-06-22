@@ -1,53 +1,13 @@
-import mongoose, { Error } from 'mongoose'
-import bcrypt from 'bcrypt'
+import mongoose from 'mongoose'
+import { IUserRepository } from '@/application/ports/IUserRepository'
+import { UserModel } from '../../../infrastructure/database/mongo/models/userModel'
+import { ShowsModel } from '../../../infrastructure/database/mongo/models/showModel'
 import { IUser, IUserMongo } from '@/common/interfaces/users'
-import { EErrorCodes } from '@/common/enums/errors'
 import { CustomError } from '@/errors/CustomError'
-import { ShowsModel } from './showModel'
-import { IShow, IShowMongo } from '@/common/interfaces/shows'
+import { EErrorCodes } from '@/common/enums/errors'
+import { IShowMongo } from '@/common/interfaces/shows'
 
-const { Schema } = mongoose
-
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  favoriteShows: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Show' }],
-})
-
-UserSchema.pre('save', async function encryptPw(next) {
-  if (this.isModified('password')) {
-    const hash = await bcrypt.hash(this.password, 10)
-    this.password = hash
-  }
-  next()
-})
-
-UserSchema.methods.isValidPassword = async function isValidPw(
-  password: string,
-) {
-  const compare = await bcrypt.compare(password, this.password)
-  return compare
-}
-
-UserSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-    delete returnedObject.password
-  },
-})
-
-export const UserModel = mongoose.model<IUser>('User', UserSchema)
-
-class UsersModelDb {
+export class MongoUserRepository implements IUserRepository {
   private users
 
   private shows
@@ -77,7 +37,7 @@ class UsersModelDb {
     }
   }
 
-  async query(email: string): Promise<IUserMongo> {
+  async getByEmail(email: string): Promise<IUserMongo> {
     try {
       const user = await this.users.findOne({ email })
       if (!user) {
@@ -100,11 +60,11 @@ class UsersModelDb {
     }
   }
 
-  async getUserFavoriteShows(userId: string): Promise<IShow[]> {
+  async getUserFavoriteShows(userId: string): Promise<IShowMongo[]> {
     try {
       const user = await this.users.findById(userId).populate('favoriteShows')
 
-      return user?.favoriteShows as IShow[]
+      return user?.favoriteShows as IShowMongo[]
     } catch (error) {
       if (error instanceof mongoose.Error.CastError) {
         throw new CustomError(
@@ -205,5 +165,3 @@ class UsersModelDb {
     }
   }
 }
-
-export const usersModelDb = new UsersModelDb()

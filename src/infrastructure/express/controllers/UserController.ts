@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { usersModelDb } from '@/models/userModel'
+import { userService } from '@/application/domain/UserService'
 
 export abstract class UserController {
   public static async addFavoriteShows(
@@ -8,7 +8,7 @@ export abstract class UserController {
   ): Promise<void> {
     const userId = (req.user as Express.User & { id: string })?.id
     const { showId } = req.body
-    const result = await usersModelDb.addToUserFavoriteShows(userId, showId)
+    const result = await userService.addFavoriteShow(userId, showId)
     res.status(200).json({ data: result })
   }
 
@@ -18,7 +18,7 @@ export abstract class UserController {
   ): Promise<void> {
     const userId = (req.user as Express.User & { id: string })?.id
     const { showId } = req.params
-    await usersModelDb.deleteUserFavoriteShows(userId, showId)
+    await userService.deleteFavoriteShow(userId, showId)
     res.status(204).send()
   }
 
@@ -27,7 +27,7 @@ export abstract class UserController {
     res: Response,
   ): Promise<void> {
     const userId = (req.user as Express.User & { id: string })?.id
-    const result = await usersModelDb.getUserFavoriteShows(userId)
+    const result = await userService.getUserFavoriteShows(userId)
     res.status(200).json({ data: result })
   }
 }

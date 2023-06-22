@@ -1,27 +1,43 @@
 import supertest, { SuperAgentTest } from 'supertest'
-import Server from '@/services/server'
 import { shows } from '@/seed-data/data'
-import { db } from '@/services/db'
 import { SeedData } from '@/seed-data'
 import { IShowMongo } from '@/common/interfaces/shows'
+import { Application } from '@/application/server'
+import { mongoDb } from '@/infrastructure/database/mongo/MongoDatabase'
 
 describe('Shows routes success responses', () => {
   let request: SuperAgentTest
 
   beforeAll(async () => {
-    request = supertest.agent(Server)
-    await db.connect()
+    const app = new Application()
+    request = supertest.agent(app.getServer())
+    await mongoDb.connect()
     await SeedData.insertShows(shows)
   })
 
   afterAll(async () => {
-    await db.close()
+    await mongoDb.close()
   })
 
   it('GET: /api/shows should return a list of shows', async () => {
     const response = await request.get('/api/shows')
     expect(response.statusCode).toBe(200)
     expect(response.body.data.length).not.toBe(0)
+    expect(response.body.data).toEqual(
+      jasmine.arrayContaining([
+        jasmine.objectContaining({ title: 'The last of us' }),
+      ]),
+    )
+    expect(response.body.data).toEqual(
+      jasmine.arrayContaining([
+        jasmine.objectContaining({ title: 'Avatar: The way of the water' }),
+      ]),
+    )
+    expect(response.body.data).toEqual(
+      jasmine.arrayContaining([
+        jasmine.objectContaining({ title: 'The Pale Blue Eye' }),
+      ]),
+    )
   })
 
   it('GET: /api/shows?category=tv-show should return a list of only the tv shows', async () => {

@@ -2,11 +2,11 @@ import passport from 'passport'
 import passportLocal, { IStrategyOptionsWithRequest } from 'passport-local'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { Request } from 'express'
-import { usersModelDb } from '@/models/userModel'
 import { IUser } from '@/common/interfaces/users'
 import { config } from '@/config'
 import { CustomError } from '@/errors/CustomError'
 import { EErrorCodes } from '@/common/enums/errors'
+import { userService } from '@/application/domain/UserService'
 
 const LocalStrategy = passportLocal.Strategy
 
@@ -44,7 +44,12 @@ const signupFunction = async (
         `-${EErrorCodes.UserSignUpError}`,
       )
     }
-    const user = await usersModelDb.save({ email, password, favoriteShows: [] })
+
+    const user = await userService.saveUser({
+      email,
+      password,
+      favoriteShows: [],
+    })
 
     console.log(`Signup successful for user ${email}, ${new Date()}`)
     return done(null, user)
@@ -64,7 +69,7 @@ const loginFunction = async (
   ) => void,
 ) => {
   try {
-    const user = await usersModelDb.query(email)
+    const user = await userService.getUserByEmail(email)
 
     if (!(await user.isValidPassword(password))) {
       console.log(`Login failed for user ${email}: password is incorrect`)

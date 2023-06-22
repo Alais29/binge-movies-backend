@@ -1,6 +1,6 @@
 import express from 'express'
 import asyncHandler from 'express-async-handler'
-import { ShowsController } from '@/controllers/showsController'
+import { ShowsController } from '../controllers/ShowsController'
 
 const showsRouter = express.Router()
 

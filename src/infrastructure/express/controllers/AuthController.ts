@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import jwt from 'jsonwebtoken'
-import passport from '@/middlewares/auth'
+import passport from '../middlewares/auth'
 import { CustomError } from '@/errors/CustomError'
 import { EErrorCodes } from '@/common/enums/errors'
 import { config } from '@/config'

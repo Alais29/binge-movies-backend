@@ -1,6 +1,6 @@
 import express from 'express'
 import asyncHandler from 'express-async-handler'
-import { AuthController } from '@/controllers/authController'
+import { AuthController } from '../controllers/AuthController'
 
 const authRouter = express.Router()
 

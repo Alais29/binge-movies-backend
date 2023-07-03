@@ -2,7 +2,7 @@ import passport from 'passport'
 import passportLocal, { IStrategyOptionsWithRequest } from 'passport-local'
 import { Strategy, ExtractJwt } from 'passport-jwt'
 import { Request } from 'express'
-import { IUser } from '@/common/interfaces/users'
+import { IUser, IUserMongo } from '@/common/interfaces/users'
 import { config } from '@/config'
 import { CustomError } from '@/errors/CustomError'
 import { EErrorCodes } from '@/common/enums/errors'
@@ -69,7 +69,7 @@ const loginFunction = async (
   ) => void,
 ) => {
   try {
-    const user = await userService.getUserByEmail(email)
+    const user = (await userService.getUserByEmail(email)) as IUserMongo
 
     if (!(await user.isValidPassword(password))) {
       console.log(`Login failed for user ${email}: password is incorrect`)

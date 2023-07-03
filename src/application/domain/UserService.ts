@@ -1,6 +1,6 @@
-import { IShowMongo } from '@/common/interfaces/shows'
+import { IShow } from '@/common/interfaces/shows'
 import { IUserService } from '../ports/IUserService'
-import { IUser, IUserMongo } from '@/common/interfaces/users'
+import { IUser } from '@/common/interfaces/users'
 import { UserServiceAdapter } from '../adapters/services/UserServiceAdapter'
 
 class UserService {
@@ -10,7 +10,7 @@ class UserService {
     this.userServiceAdapter = userServiceAdapter
   }
 
-  async getUserByEmail(email: string): Promise<IUserMongo> {
+  async getUserByEmail(email: string): Promise<IUser> {
     return this.userServiceAdapter.getUserByEmail(email)
   }
 
@@ -18,11 +18,11 @@ class UserService {
     return this.userServiceAdapter.saveUser(userData)
   }
 
-  async getUserFavoriteShows(userId: string): Promise<IShowMongo[]> {
+  async getUserFavoriteShows(userId: string): Promise<IShow[]> {
     return this.userServiceAdapter.getUserFavoriteShows(userId)
   }
 
-  async addFavoriteShow(userId: string, showId: string): Promise<IShowMongo[]> {
+  async addFavoriteShow(userId: string, showId: string): Promise<IShow[]> {
     return this.userServiceAdapter.addFavoriteShow(userId, showId)
   }
 

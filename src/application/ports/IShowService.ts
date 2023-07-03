@@ -1,7 +1,7 @@
-import { IShow, IShowMongo } from '@/common/interfaces/shows'
+import { IShow } from '@/common/interfaces/shows'
 
 export interface IShowService {
-  getAllShows(): Promise<IShowMongo[]>
+  getAllShows(): Promise<IShow[]>
   getShowsByCategory(category: string): Promise<IShow[]>
-  getShowById(showId: string): Promise<IShowMongo>
+  getShowById(showId: string): Promise<IShow>
 }

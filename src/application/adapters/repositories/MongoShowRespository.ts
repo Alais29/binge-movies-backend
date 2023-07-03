@@ -1,6 +1,5 @@
-/* eslint-disable class-methods-use-this */
 import mongoose, { FilterQuery } from 'mongoose'
-import { IShow, IShowMongo, IShowQuery } from '@/common/interfaces/shows'
+import { IShow, IShowQuery } from '@/common/interfaces/shows'
 import { ShowsModel } from '../../../infrastructure/database/mongo/models/showModel'
 import { IShowRepository } from '@/application/ports/IShowRepository'
 import { CustomError } from '@/errors/CustomError'
@@ -13,14 +12,14 @@ export class MongoShowRepository implements IShowRepository {
     this.shows = ShowsModel
   }
 
-  async get(id?: string): Promise<IShowMongo | IShowMongo[]> {
+  async get(id?: string): Promise<IShow | IShow[]> {
     try {
-      let result: IShowMongo | IShowMongo[] = []
+      let result: IShow | IShow[] = []
       if (id) {
         const show = await this.shows.findById(id)
-        if (show) result = show as unknown as IShowMongo
+        if (show) result = show as unknown as IShow
       } else {
-        const shows: IShowMongo[] = await this.shows.find()
+        const shows: IShow[] = await this.shows.find()
         result = shows
       }
       return result

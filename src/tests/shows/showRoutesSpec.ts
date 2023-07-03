@@ -1,7 +1,7 @@
 import supertest, { SuperAgentTest } from 'supertest'
 import { shows } from '@/seed-data/data'
 import { SeedData } from '@/seed-data'
-import { IShowMongo } from '@/common/interfaces/shows'
+import { IShow } from '@/common/interfaces/shows'
 import { Application } from '@/application/server'
 import { mongoDb } from '@/infrastructure/database/mongo/MongoDatabase'
 
@@ -44,9 +44,7 @@ describe('Shows routes success responses', () => {
     const response = await request.get('/api/shows?category=tv-show')
     expect(response.statusCode).toBe(200)
     expect(
-      response.body.data.every(
-        (show: IShowMongo) => show.category === 'tv show',
-      ),
+      response.body.data.every((show: IShow) => show.category === 'tv show'),
     ).toBeTrue()
   })
 
@@ -54,7 +52,7 @@ describe('Shows routes success responses', () => {
     const response = await request.get('/api/shows?category=movies')
     expect(response.statusCode).toBe(200)
     expect(
-      response.body.data.every((show: IShowMongo) => show.category === 'movie'),
+      response.body.data.every((show: IShow) => show.category === 'movie'),
     ).toBeTrue()
   })
 

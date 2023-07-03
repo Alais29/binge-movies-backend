@@ -2,10 +2,10 @@ import mongoose from 'mongoose'
 import { IUserRepository } from '@/application/ports/IUserRepository'
 import { UserModel } from '../../../infrastructure/database/mongo/models/userModel'
 import { ShowsModel } from '../../../infrastructure/database/mongo/models/showModel'
-import { IUser, IUserMongo } from '@/common/interfaces/users'
+import { IUser } from '@/common/interfaces/users'
 import { CustomError } from '@/errors/CustomError'
 import { EErrorCodes } from '@/common/enums/errors'
-import { IShowMongo } from '@/common/interfaces/shows'
+import { IShow } from '@/common/interfaces/shows'
 
 export class MongoUserRepository implements IUserRepository {
   private users
@@ -37,7 +37,7 @@ export class MongoUserRepository implements IUserRepository {
     }
   }
 
-  async getByEmail(email: string): Promise<IUserMongo> {
+  async getByEmail(email: string): Promise<IUser> {
     try {
       const user = await this.users.findOne({ email })
       if (!user) {
@@ -47,7 +47,7 @@ export class MongoUserRepository implements IUserRepository {
           `-${EErrorCodes.UserNotFound}`,
         )
       }
-      return user as IUserMongo
+      return user as IUser
     } catch (error) {
       if (error instanceof CustomError) {
         throw error
@@ -60,11 +60,11 @@ export class MongoUserRepository implements IUserRepository {
     }
   }
 
-  async getUserFavoriteShows(userId: string): Promise<IShowMongo[]> {
+  async getUserFavoriteShows(userId: string): Promise<IShow[]> {
     try {
       const user = await this.users.findById(userId).populate('favoriteShows')
 
-      return user?.favoriteShows as IShowMongo[]
+      return user?.favoriteShows as IShow[]
     } catch (error) {
       if (error instanceof mongoose.Error.CastError) {
         throw new CustomError(
@@ -84,7 +84,7 @@ export class MongoUserRepository implements IUserRepository {
   async addToUserFavoriteShows(
     userId: string,
     showId: string,
-  ): Promise<IShowMongo[]> {
+  ): Promise<IShow[]> {
     try {
       const user = await this.users.findById(userId)
       const show = await this.shows.findById(showId)
@@ -103,7 +103,7 @@ export class MongoUserRepository implements IUserRepository {
       }
       const updatedUser = await user?.populate('favoriteShows')
 
-      return updatedUser?.favoriteShows as IShowMongo[]
+      return updatedUser?.favoriteShows as IShow[]
     } catch (error) {
       if (error instanceof CustomError) {
         throw error

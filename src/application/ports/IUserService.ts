@@ -1,10 +1,10 @@
-import { IShowMongo } from '@/common/interfaces/shows'
-import { IUser, IUserMongo } from '@/common/interfaces/users'
+import { IShow } from '@/common/interfaces/shows'
+import { IUser } from '@/common/interfaces/users'
 
 export interface IUserService {
-  getUserByEmail(email: string): Promise<IUserMongo>
+  getUserByEmail(email: string): Promise<IUser>
   saveUser(userData: IUser): Promise<IUser>
-  getUserFavoriteShows(userId: string): Promise<IShowMongo[]>
-  addFavoriteShow(userId: string, showId: string): Promise<IShowMongo[]>
+  getUserFavoriteShows(userId: string): Promise<IShow[]>
+  addFavoriteShow(userId: string, showId: string): Promise<IShow[]>
   deleteFavoriteShow(userId: string, showId: string): Promise<void>
 }

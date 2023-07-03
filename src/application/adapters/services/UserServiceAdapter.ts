@@ -1,13 +1,13 @@
 /* eslint-disable class-methods-use-this */
 import { IUserService } from '@/application/ports/IUserService'
-import { IShowMongo } from '@/common/interfaces/shows'
-import { IUserMongo, IUser } from '@/common/interfaces/users'
+import { IShow } from '@/common/interfaces/shows'
+import { IUser } from '@/common/interfaces/users'
 import { MongoUserRepository } from '../repositories/MongoUserRespository'
 
 const userRepository = new MongoUserRepository()
 
 export class UserServiceAdapter implements IUserService {
-  async getUserByEmail(email: string): Promise<IUserMongo> {
+  async getUserByEmail(email: string): Promise<IUser> {
     return userRepository.getByEmail(email)
   }
 
@@ -15,11 +15,11 @@ export class UserServiceAdapter implements IUserService {
     return userRepository.save(userData)
   }
 
-  async getUserFavoriteShows(userId: string): Promise<IShowMongo[]> {
+  async getUserFavoriteShows(userId: string): Promise<IShow[]> {
     return userRepository.getUserFavoriteShows(userId)
   }
 
-  async addFavoriteShow(userId: string, showId: string): Promise<IShowMongo[]> {
+  async addFavoriteShow(userId: string, showId: string): Promise<IShow[]> {
     return userRepository.addToUserFavoriteShows(userId, showId)
   }
 

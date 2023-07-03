@@ -1,4 +1,4 @@
-import { IShow, IShowMongo } from '@/common/interfaces/shows'
+import { IShow } from '@/common/interfaces/shows'
 import { IShowService } from '@/application/ports/IShowService'
 import { ShowServiceAdapter } from '@/application/adapters/services/ShowServiceAdapter'
 
@@ -11,7 +11,7 @@ class ShowService {
 
   // TODO: Implement method to add shows
 
-  async getAllShows(): Promise<IShowMongo[]> {
+  async getAllShows(): Promise<IShow[]> {
     return this.showServiceAdapter.getAllShows()
   }
 
@@ -19,7 +19,7 @@ class ShowService {
     return this.showServiceAdapter.getShowsByCategory(category)
   }
 
-  async getShowById(showId: string): Promise<IShowMongo> {
+  async getShowById(showId: string): Promise<IShow> {
     return this.showServiceAdapter.getShowById(showId)
   }
 }

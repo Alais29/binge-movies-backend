@@ -1,7 +1,7 @@
 import express from 'express'
 import asyncHandler from 'express-async-handler'
-import { UserController } from '@/controllers/userController'
-import passport from '@/middlewares/auth'
+import { UserController } from '../controllers/UserController'
+import passport from '../middlewares/auth'
 
 const userRouter = express.Router()
 

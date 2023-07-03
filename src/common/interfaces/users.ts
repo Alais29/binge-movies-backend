@@ -1,10 +1,10 @@
 import { Document } from 'mongoose'
-import { IShowMongo } from './shows'
+import { IShow } from './shows'
 
 export interface IUser {
   email: string
   password: string
-  favoriteShows: IShowMongo[]
+  favoriteShows: IShow[]
 }
 
 export interface IUserMongo extends IUser, Document {

@@ -1,15 +1,16 @@
 import supertest, { SuperAgentTest } from 'supertest'
-import Server from '@/services/server'
-import { db } from '@/services/db'
 import { SeedData } from '@/seed-data'
 import { EErrorCodes } from '@/common/enums/errors'
+import { Application } from '@/application/server'
+import { mongoDb } from '@/infrastructure/database/mongo/MongoDatabase'
 
 describe('Auth routes success responses', () => {
   let request: SuperAgentTest
 
   beforeAll(async () => {
-    request = supertest.agent(Server)
-    await db.connect()
+    const app = new Application()
+    request = supertest.agent(app.getServer())
+    await mongoDb.connect()
     await SeedData.insertUser({
       email: 'test@test.com',
       password: 'password',
@@ -18,7 +19,7 @@ describe('Auth routes success responses', () => {
   })
 
   afterAll(async () => {
-    await db.close()
+    await mongoDb.close()
   })
 
   it('POST: /api/auth/signup should allow an user to sign up', async () => {
@@ -47,8 +48,9 @@ describe('Auth routes error responses', () => {
   let request: SuperAgentTest
 
   beforeAll(async () => {
-    request = supertest.agent(Server)
-    await db.connect()
+    const app = new Application()
+    request = supertest.agent(app.getServer())
+    await mongoDb.connect()
     await SeedData.insertUser({
       email: 'test@test.com',
       password: 'password',
@@ -57,7 +59,7 @@ describe('Auth routes error responses', () => {
   })
 
   afterAll(async () => {
-    await db.close()
+    await mongoDb.close()
   })
 
   it('POST: /api/auth/signup should return error if email or password are missing', async () => {

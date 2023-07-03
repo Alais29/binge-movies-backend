@@ -1,8 +1,8 @@
+import { ShowsModel } from '@/infrastructure/database/mongo/models/showModel'
 import { IShow, IShowMongo } from '@/common/interfaces/shows'
-import { IUser, IUserMongo } from '@/common/interfaces/users'
+import { IUser } from '@/common/interfaces/users'
 import { config } from '@/config'
-import { ShowsModel } from '@/models/showModel'
-import { UserModel } from '@/models/userModel'
+import { userService } from '@/application/domain/UserService'
 
 export class SeedData {
   static async insertShows(shows: IShow[]): Promise<void> {
@@ -10,6 +10,7 @@ export class SeedData {
     const promises: Promise<IShow>[] = []
     shows.forEach(show => {
       console.log(`🛍️  Adding Show: ${show.title}`)
+      // TODO: use showService instead
       const newShow = new ShowsModel(show) as unknown as IShowMongo
       promises.push(newShow.save())
     })
@@ -21,7 +22,6 @@ export class SeedData {
   }
 
   static async insertUser(user: IUser) {
-    const newUser = new UserModel(user) as unknown as IUserMongo
-    await newUser.save()
+    userService.saveUser(user)
   }
 }

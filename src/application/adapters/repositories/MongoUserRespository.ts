@@ -1,53 +1,13 @@
-import mongoose, { Error } from 'mongoose'
-import bcrypt from 'bcrypt'
-import { IUser, IUserMongo } from '@/common/interfaces/users'
-import { EErrorCodes } from '@/common/enums/errors'
+import mongoose from 'mongoose'
+import { IUserRepository } from '@/application/ports/IUserRepository'
+import { UserModel } from '../../../infrastructure/database/mongo/models/userModel'
+import { ShowsModel } from '../../../infrastructure/database/mongo/models/showModel'
+import { IUser } from '@/common/interfaces/users'
 import { CustomError } from '@/errors/CustomError'
-import { ShowsModel } from './showModel'
-import { IShow, IShowMongo } from '@/common/interfaces/shows'
+import { EErrorCodes } from '@/common/enums/errors'
+import { IShow } from '@/common/interfaces/shows'
 
-const { Schema } = mongoose
-
-const UserSchema = new Schema({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  favoriteShows: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Show' }],
-})
-
-UserSchema.pre('save', async function encryptPw(next) {
-  if (this.isModified('password')) {
-    const hash = await bcrypt.hash(this.password, 10)
-    this.password = hash
-  }
-  next()
-})
-
-UserSchema.methods.isValidPassword = async function isValidPw(
-  password: string,
-) {
-  const compare = await bcrypt.compare(password, this.password)
-  return compare
-}
-
-UserSchema.set('toJSON', {
-  transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString()
-    delete returnedObject._id
-    delete returnedObject.__v
-    delete returnedObject.password
-  },
-})
-
-export const UserModel = mongoose.model<IUser>('User', UserSchema)
-
-class UsersModelDb {
+export class MongoUserRepository implements IUserRepository {
   private users
 
   private shows
@@ -77,7 +37,7 @@ class UsersModelDb {
     }
   }
 
-  async query(email: string): Promise<IUserMongo> {
+  async getByEmail(email: string): Promise<IUser> {
     try {
       const user = await this.users.findOne({ email })
       if (!user) {
@@ -87,7 +47,7 @@ class UsersModelDb {
           `-${EErrorCodes.UserNotFound}`,
         )
       }
-      return user as IUserMongo
+      return user as IUser
     } catch (error) {
       if (error instanceof CustomError) {
         throw error
@@ -124,7 +84,7 @@ class UsersModelDb {
   async addToUserFavoriteShows(
     userId: string,
     showId: string,
-  ): Promise<IShowMongo[]> {
+  ): Promise<IShow[]> {
     try {
       const user = await this.users.findById(userId)
       const show = await this.shows.findById(showId)
@@ -143,7 +103,7 @@ class UsersModelDb {
       }
       const updatedUser = await user?.populate('favoriteShows')
 
-      return updatedUser?.favoriteShows as IShowMongo[]
+      return updatedUser?.favoriteShows as IShow[]
     } catch (error) {
       if (error instanceof CustomError) {
         throw error
@@ -205,5 +165,3 @@ class UsersModelDb {
     }
   }
 }
-
-export const usersModelDb = new UsersModelDb()

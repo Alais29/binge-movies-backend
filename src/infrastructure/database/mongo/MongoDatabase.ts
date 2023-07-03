@@ -56,4 +56,4 @@ class MongoDatabase {
   }
 }
 
-export const db = new MongoDatabase(config.MONGODB_URI)
+export const mongoDb = new MongoDatabase(config.MONGODB_URI)
